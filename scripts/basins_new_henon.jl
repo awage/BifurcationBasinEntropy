@@ -18,7 +18,8 @@ function _get_basins_henon(res, a, ν)
             mx_chk_fnd_att = 3000,
             mx_chk_loc_att = 3000,
             mx_chk_att = 1)
-    basins, att = basins_of_attraction(mapper, grid; show_progress = true)
+    # basins, att = basins_of_attraction(mapper, grid; show_progress = true)
+    basins, att = basins_of_attraction(mapper; show_progress = true)
     return basins,att 
 end
 

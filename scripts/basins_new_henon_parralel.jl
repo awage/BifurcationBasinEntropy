@@ -25,14 +25,14 @@ end
 
     basins, att = basins_of_attraction(mapper, grid;
         show_progress = false,
-)
+    )
 
 
-	mn_wd, mx_wd, Sb, Sbb, α, ch_ps = 0., 0., 0., 0., 0., 0.
+    mn_wd, mx_wd, Sb, Sbb, α, ch_ps = 0., 0., 0., 0., 0., 0.
     Na = length(unique(basins))
-	Sb , Sbb = basin_entropy(basins)
+    Sb , Sbb = basin_entropy(basins)
 
-	@show a, ν, Na, Sb, Sbb
+    @show a, ν, Na, Sb, Sbb
 
     return @strdict(basins, att, xg, yg, Na, Sb, Sbb)
 end

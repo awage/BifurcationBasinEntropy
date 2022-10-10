@@ -8,8 +8,8 @@ function new_henon(x, p, n)
 end
 
 @load "bif_henon_500.jld2"
-# a = range(0., 4, length = 4000)
-a = 0:0.001:4
+a = range(0., 4, length = 10000)
+# a = 0:0.001:4
 ν = 0.01
 pnt_lst = Vector{Vector{Float64}}(undef,1)
 
