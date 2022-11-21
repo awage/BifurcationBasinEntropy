@@ -2,7 +2,7 @@ using JLD2
 using CairoMakie
 using LaTeXStrings
 using DynamicalSystems
-@load "results_henon_res_500.jld2"
+@load "results_henon_res_1000.jld2"
 a = range(0., 3.98, length = 1000)
 ν = 0.01
 @load "diag_bif.jld2"
@@ -22,3 +22,4 @@ lines!(ax2, a[ind], vec(Sb[ind]))
 #lp.rasterize = 4
 
 save("diag_bif_henon.svg",fig)
+save("diag_bif_henon.png",fig)

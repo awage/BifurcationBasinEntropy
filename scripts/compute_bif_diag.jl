@@ -7,8 +7,8 @@ function new_henon(x, p, n)
     return SVector{2}(p[1] - x[1]^2 - (1 - p[2])*x[2],  x[1])
 end
 
-@load "bif_henon_500.jld2"
-a = range(0., 4, length = 10000)
+@load "results_henon_res_1000.jld2"
+a = range(0., 3.98, length = 10000)
 # a = 0:0.001:4
 ν = 0.01
 pnt_lst = Vector{Vector{Float64}}(undef,1)
@@ -16,7 +16,7 @@ pnt_lst = Vector{Vector{Float64}}(undef,1)
 u0 = [0., 0.6]
 df = DiscreteDynamicalSystem(new_henon, u0, [a[1],ν]) 
 
-for (k,el) in enumerate(att_m)
+for (k,el) in enumerate(att)
     @show el
     if el ≠ 0 
         for p in el
