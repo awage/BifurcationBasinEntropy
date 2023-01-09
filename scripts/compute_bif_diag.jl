@@ -34,7 +34,7 @@ P = Dataset(pnt_lst[2:end])
 
 save("diag_bif.jld2", "a", a, "P", P)
 
-fig = Figure(resolution = (1024, 768))
+fig = Figure(resolution = (1024, 1024))
 ax = Axis(fig[1,1], ylabel = "xn", yticklabelsize = 20, xticklabelsize = 20, ylabelsize = 20)
 ax2 = Axis(fig[2,1], ylabel = "Sb", xlabel = "a", yticklabelsize = 20, xticklabelsize = 20, ylabelsize = 20, xlabelsize = 20)
 

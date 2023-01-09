@@ -1,65 +1,92 @@
-@everywhere using DrWatson
-@everywhere @quickactivate
-@everywhere using DynamicalSystems
-@everywhere using StaticArrays
+using DrWatson
+@quickactivate
+# using DynamicalSystems
+using Attractors
+using StaticArrays
+using Random
+using CairoMakie
+using JLD2
 
-
-@everywhere function new_henon(x, p, n)
+ function new_henon(x, p, n)
     return SVector{2}(p[1] - x[1]^2 - (1 - p[2])*x[2],  x[1])
 end
 
 
 
-@everywhere function _get_basins_henon(d)
-    @unpack res, a, ν = d
+function _get_continuation_henon(arange)
+    # @unpack res, a, ν = d
+    ν = 0.01
     u0 = [0., 0.6]
-    df = DiscreteDynamicalSystem(new_henon, u0, [a,ν]) 
+    df = DiscreteDynamicalSystem(new_henon, u0, [1.,ν]) 
     # df = Systems.henon(u0; a, b)
-    xg = yg = range(-25, 25, length = res)
+    xg = yg = range(-25, 25, length = 5001)
     grid = (xg, yg)
-    mapper = AttractorsViaRecurrences(df, grid,
+    mapper = Attractors.AttractorsViaRecurrences(df, grid; sparse = true,
             mx_chk_lost = 10, 
             mx_chk_fnd_att = 3000, 
             mx_chk_loc_att = 3000, 
             mx_chk_att = 2)
 
-    basins, att = basins_of_attraction(mapper, grid;
-        show_progress = false,
+    pidx = 1; spp = 1000
+    sampler, = statespace_sampler(Random.MersenneTwister(1234); min_bounds = [-2., -2.], max_bounds = [2., 2.])
+
+    ## RECURENCE CONTINUATION
+    continuation = RecurrencesSeedingContinuation(mapper;
+        threshold = 0.01
     )
+    fs, att = basins_fractions_continuation(
+            continuation, arange, pidx, sampler;
+            show_progress = true, samples_per_parameter = spp
+            )
 
 
-    mn_wd, mx_wd, Sb, Sbb, α, ch_ps = 0., 0., 0., 0., 0., 0.
-    Na = length(unique(basins))
-    Sb , Sbb = basin_entropy(basins)
-
-    @show a, ν, Na, Sb, Sbb
-
-    return @strdict(basins, att, xg, yg, Na, Sb, Sbb)
+    return fs,att
 end
 
-
-@everywhere function compute_basins(res, a, ν)
-
-	data, file = produce_or_load(
-	    datadir("basins"), # path
-	    @dict(res, a, ν), # container
-	    _get_basins_henon, # function
-	    prefix = "basins_henon", # prefix for savename
-	    force = true,
-        digits = 5,
-        wsave_kwargs = (;compress = true)
-	)
-
-    return 1;
+function plot_bif(arange, att)
+    a = arange; ν = 0.01
+    s = Vector{Int32}[]
+    for e in att 
+        push!(s, collect(keys(e)))
+    end
+    s = unique(vcat(s...))
+    ptlst = Vector{Vector{Vector{Float64}}}(undef,length(s))
+    for k in 1:length(s); ptlst[k] = []; end
+    u0 = [0., 0.6]
+    df = DiscreteDynamicalSystem(new_henon, u0, [a[1],ν]) 
+    for (k,el) in enumerate(att)
+        @show el
+        if el ≠ 0 
+            for p in el
+                set_parameter!(df, [a[k], ν])
+                tra = trajectory(df, 20, p[2][1]; Ttr = 200000)
+                for y in tra
+                    v = [a[k], y[1]]
+                    push!(ptlst[p[1]], v)
+                end
+            end
+        end
+    end
+    return ptlst 
 end
 
+arange = range(0.0, 3.98, length = 5000)
+f,a = _get_continuation_henon(arange)
+ptlst = plot_bif(arange, a)
 
+fig = Figure(resolution = (1300, 900))
+ax = Axis(fig[1,1], ylabel = "xn", yticklabelsize = 20, xticklabelsize = 20, ylabelsize = 20)
+for (j,p) in enumerate(ptlst)
+    P = Dataset(p)
+    scatter!(ax, P[:,1],P[:,2], markersize = 0.7, color = Cycled(j), rasterize = 4)
+end
 
-res = 3000
-a = range(0.0, 3.98, length = 10000)
-ν = 0.01
+@load "results_henon_res_1000.jld2"
+ax2 = Axis(fig[2,1], ylabel = "Sb", xlabel = "a", yticklabelsize = 20, xticklabelsize = 20, ylabelsize = 20, xlabelsize = 20)
+ind = findall(a .≤ 4)
+lines!(ax2, a[ind], vec(Sb[ind]))
 
-#@suppress_err begin
-#cmpt_grid_wada(0.1, 0.3)
-pmap(k -> compute_basins(res, a[k], ν), 1:length(a))
-#end
+# save("diag_bif_henon.svg",fig)
+# run(`inkscape diag_bif_henon.svg --export-type=pdf`)
+
+save("diag_bif_henon.png",fig)
