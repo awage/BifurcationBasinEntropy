@@ -33,21 +33,28 @@ end
 res = 1500
 # a = 2.065:0.05:2.8
 # SADDLE NODE 0 to 1 state. 
-xg = range(-3, 3, length = res)
-yg = range(-4, 13, length = res)
-a = range(-0.5, 1.2, length = 100)
-J = 0.3
+# xg = range(-3, 3, length = res)
+# yg = range(-20, 3, length = res)
+# a = range(-0.423, -0.421, length = 10)
+# J = 0.3
+
 # Asf and Aff transitions
 # xg = range(-3, 3, length = res)
 # yg = range(-4, 13, length = res)
 # a = range(1.3, 1.43, length = 100)
 # J = 0.3
-# FOR SADDLE NODE (within another basin): 
-# xg = range(-3, 3, length = res)
-# yg = range(-100, 80, length = res)
-# a = range(1.62935, 1.62940, length = 20)
-# J = 0.05
 
+# FOR SADDLE NODE ( period 3 within another basin): 
+xg = range(-3, 3, length = res)
+yg = range(-100, 80, length = res)
+a = range(1.6293745, 1.629375, length = 10)
+J = 0.05
+
+# FOR HOPF SUPERCRITICAL: 
+# xg = range(-3, 3, length = res)
+# yg = range(-10, 10, length = res)
+# a = range(1.7, 2.2, length = 20)
+# J = 0.3
 # bas,att = _get_basins_henon(res,a,ν)
 Sb =zeros(length(a))
 Sbb =zeros(length(a))
@@ -63,4 +70,15 @@ for j in 1:length(a)
 end
 plot(a, Sb)
 # save("bif_henon_500.jld2", "Sb", Sb, "Sbb", Sbb, "att_m", att_m) 
+
+
+# Eigenvalues of the iterated map for the period-3 orbit near the saddle node 
+# bifurcation. 
+J = 0.05; A = 1.629375
+Ja(v) = [ -2*v[1] -J; 1 0]
+f(v) = [A - v[1]^2 - J*v[2]; v[1]] 
+v = [-1.2196415780604446;   1.6870511957819307]
+JJ = Ja(f(f(v)))*Ja(f(v))*Ja(v)
+using LinearAlgebra
+eigen(JJ)
 
