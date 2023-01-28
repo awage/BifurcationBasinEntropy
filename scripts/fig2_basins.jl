@@ -1,6 +1,5 @@
 using DynamicalSystems
 using Attractors
-using StaticArrays
 using JLD2
 using CairoMakie
 using LaTeXStrings

@@ -66,15 +66,16 @@ save("fig4_crisis.png",fig)
 
 # Inset 1. A1
 bas, att = _get_basins_henon(1.8874, J, xg, yg)
-fig = Figure(resolution = (1024, 768))
-ax = Axis(fig[1,1], xlabel = L"x_n", ylabel = L"y_n"; print_args...)
+fig = Figure(resolution = (600, 600))
+cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
+ax = Axis(fig[1,1]; print_args...)
 heatmap!(ax, xg, yg, bas; colormap = cmap, rastersize = 1)
 save("fig4_cris_inset1.png",fig)
 
 # Inset 2. A1
 bas, att = _get_basins_henon(1.95, J, xg, yg)
-fig = Figure(resolution = (1024, 768))
-ax = Axis(fig[1,1], xlabel = L"x_n", ylabel = L"y_n"; print_args...)
+fig = Figure(resolution = (600, 600))
+ax = Axis(fig[1,1]; print_args...)
 heatmap!(ax, xg, yg, bas; colormap = cmap, rastersize = 1)
 save("fig4_cris_inset2.png",fig)
 
