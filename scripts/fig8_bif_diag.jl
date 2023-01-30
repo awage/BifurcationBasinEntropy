@@ -54,19 +54,22 @@ end
 
 
 function print_fig(a, P, Sb, Sbb, fname)
-    print_args = (; yticklabelsize = 30, 
-                xticklabelsize = 30, 
+    print_args = (; yticklabelsize = 20, 
+                xticklabelsize = 20, 
                 ylabelsize = 40, 
                 xlabelsize = 40, 
                 xticklabelfont = "cmr10", 
                 yticklabelfont = "cmr10")
-    fig = Figure(resolution = (1024, 1024))
+    fig = Figure(resolution = (1000, 1200))
     ax = Axis(fig[1,1], ylabel = L"y"; print_args...) 
     ax2 = Axis(fig[2,1], ylabel = L"S_b"; print_args...)
     ax3 = Axis(fig[3,1], ylabel = L"S_{bb}", xlabel = L"A"; print_args...)
-    pl = scatter!(ax, P[:,1],P[:,2], markersize = 0.7, color = :black, rasterize = 4.)
-    scatter!(ax2, a, Sb, markersize = 2.5, rasterize = 4.)
-    scatter!(ax3, a, Sbb, markersize = 2.5, rasterize = 4.)
+    pl = scatter!(ax, P[:,1],P[:,2], markersize = 0.7, color = :black, rasterize = 4)
+    scatter!(ax2, a, Sb, markersize = 2.5, rasterize = 4)
+    scatter!(ax3, a, Sbb, markersize = 2.5, rasterize = 4)
+    Label(fig[1, 1, TopLeft()], "(a)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
+    Label(fig[2, 1, TopLeft()], "(b)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
+    Label(fig[3, 1, TopLeft()], "(c)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
     save(string(fname,".svg"),fig)
     save(string(fname,".png"),fig)
 end
@@ -121,6 +124,3 @@ J = 0.3
 @load "bif_henon_J0.3.jld2"
 print_fig(a, P, Sb, Sbb, "fig8_bif_J0.3")
 
-
-# @load "bif_henon_J0.5_v2.jld2"
-# print_fig(a, P, Sb, Sbb, "fig8_bif_J0.5")

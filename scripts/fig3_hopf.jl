@@ -92,14 +92,15 @@ scatter!(ax, μ, Sb, markersize = 10, color = :black)
 # Inset 1.
 xg = yg =  range(-1, 1, length = 200); μ = -1.5
 @unpack basins = _get_hopf(@dict(μ,xg,yg))
-ax1 = Axis(gb2[1,1]; ylabel = L"y_n", xlabel = L"x_n",  print_args...)
-cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
+ax1 = Axis(gb2[2,1]; ylabel = L"y_n", xlabel = L"x_n",  print_args...)
+cmap = ColorScheme([RGB(230/255,230/255,230/255)])
 lp1 = heatmap!(ax1, xg, yg, basins; colormap = cmap)
 lp1.rasterize = 10
 
 xg = yg =  range(-1, 1, length = 200); μ = -0.5
 @unpack basins = _get_hopf(@dict(μ,xg,yg))
-ax1 = Axis(gb2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+ax1 = Axis(gb2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
 lp2 = heatmap!(ax1, xg, yg, basins; colormap = cmap)
 lp2.rasterize = 10
 
@@ -108,5 +109,5 @@ Label(gb[1, 1, TopLeft()], "(b)", fontsize = 26, font = "cmr10", padding = (0, 5
 colsize!(f.layout, 1, Auto(0.7))
 colsize!(gb, 2, Auto(0.5))
 save("fig3.png",f)
-save("fig3.pdf",f)
+save("fig3.svg",f)
 

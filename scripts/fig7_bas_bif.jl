@@ -94,21 +94,17 @@ print_args = (; yticklabelsize = 40,
             xticklabelfont = "cmr10", 
             yticklabelfont = "cmr10")
     fig = Figure(resolution = (1024, 1024))
-    # ax = Axis(fig[1,1], ylabel = L"y"; print_args...) 
     ax2 = Axis(fig[1,1], ylabel = L"S_b"; print_args...)
     ax3 = Axis(fig[2,1], ylabel = L"S_{bb}", xlabel = L"b"; print_args...)
-    # pl = scatter!(ax, P[:,1],P[:,2], markersize = 0.7, color = :black)
-    # pl.rasterize = true
     scatter!(ax2, a, Sb, markersize = 5)
     scatter!(ax3, a, Sbb, markersize = 5)
-    # lines!(ax3, [a[1], a[end]], [0.4395093, 0.4395093]; linestyle = :dash, linewidth = 4)
     save(string(fname, ".svg"),fig)
     save(string(fname,".png"),fig)
 end
 
 
-print_args = (; yticklabelsize = 40, 
-            xticklabelsize = 40, 
+print_args = (; yticklabelsize = 20, 
+            xticklabelsize = 20, 
             ylabelsize = 40, 
             xlabelsize = 40, 
             xticklabelfont = "cmr10", 
@@ -134,8 +130,8 @@ Sb, Sbb = compute_Sb_fig_b(a, b, xg, yg)
 Sbb[isnan.(Sbb)] .= 0 
 ax2 = Axis(ga1[1,1], ylabel = L"S_b"; print_args...)
 ax3 = Axis(ga2[1,1], ylabel = L"S_{bb}", xlabel = L"b"; print_args...)
-scatter!(ax2, b, Sb, markersize = 5)
-scatter!(ax3, b, Sbb, markersize = 5)
+scatter!(ax2, b, Sb, markersize = 10, color = :black)
+scatter!(ax3, b, Sbb, markersize = 10, color = :black)
 
 
 xg = yg = range(-3, 3, length = res)

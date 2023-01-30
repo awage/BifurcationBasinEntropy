@@ -106,7 +106,7 @@ cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/2
 heatmap!(ax, xg, yg, bas2; colormap = cmap, rasterize = 4)
 
 
-bas,s,ss = _get_datas(-0.1, xg, yg)
+bas,s,ss = _get_datas(0.1, xg, yg)
         bas2 = -1 .*ones(Int16, size(bas))
         bas2[bas .== 1] .= 1
         bas2[bas .== 2] .= 1

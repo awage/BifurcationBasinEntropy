@@ -104,7 +104,7 @@ xg = range(-2.5, -1, length = 200); yg = range(-20, 20, length = 200); A = 1.629
 @unpack basins = _get_basins_henon(@dict(A,J,xg,yg))
 # basins, att, sb, sbb = _get_datas(1.6293745,J,xg,yg)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0), RGB(0,0,1), RGB(1,85/255,85/255)] )
-ax4 = Axis(gb2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+ax4 = Axis(gb2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
 lp2 = heatmap!(ax4, xg, yg, basins; colormap = cmap, rasterize = 4)
 # lp2.rasterize = 4
 
@@ -112,7 +112,7 @@ xg = range(-2.5, -1, length = 200); yg = range(-20, 20, length = 200); A = 1.629
 @unpack basins = _get_basins_henon(@dict(A,J,xg,yg))
 # basins, att, sb, sbb = _get_datas(1.629375,J,xg,yg)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255), RGB(0,0,1)] )
-ax5 = Axis(gb2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+ax5 = Axis(gb2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
 lp = heatmap!(ax5, xg, yg, basins; colormap = cmap, rasterize = 4)
 # lp.rasterize = 4
 
@@ -126,12 +126,12 @@ scatter!(ax, a, Sb, markersize = 10, color = :black)
 
 basins, att, sb, sbb = _get_datas(-0.423,J,xg,yg)
 cmap = ColorScheme([RGB(230/255,230/255,230/255)] )
-ax4 = Axis(ga2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+ax4 = Axis(ga2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
 lp2 = heatmap!(ax4, xg, yg, basins; colormap = cmap, rasterize = 4)
 # lp2.rasterize = 4
 basins, att, sb, sbb = _get_datas(-0.421,J,xg,yg)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(0,0,1), RGB(1,85/255,85/255)] )
-ax5 = Axis(ga2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+ax5 = Axis(ga2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
 lp = heatmap!(ax5, xg, yg, basins; colormap = cmap, rasterize = 4)
 # lp.rasterize = 4
 colsize!(ga, 2, Auto(0.5))

@@ -107,5 +107,5 @@ Label(gb[1, 1, TopLeft()], "(b)", fontsize = 26, font = "cmr10", padding = (0, 5
 colsize!(f.layout, 1, Auto(0.7))
 colsize!(gb, 2, Auto(0.5))
 save("fig4.png",f)
-save("fig4.pdf",f)
+save("fig4.svg",f)
 
