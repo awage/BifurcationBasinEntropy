@@ -1,3 +1,5 @@
+using DrWatson
+@quickactivate
 using DynamicalSystems
 using Attractors
 using JLD2
@@ -60,13 +62,23 @@ function compute_Sb_fig(μ, xg, yg)
 end
 
 
-print_args = (; yticklabelsize = 40, 
-            xticklabelsize = 40, 
-            ylabelsize = 80, 
-            xlabelsize = 80, 
+print_args = (; yticklabelsize = 20, 
+            xticklabelsize = 20, 
+            ylabelsize = 40, 
+            xlabelsize = 40, 
             xticklabelfont = "cmr10", 
             yticklabelfont = "cmr10")
 cmap = ColorScheme([RGB(1,1,1), RGB(1,0,0), RGB(0,1,0), RGB(0,0,1)] )
+
+f = Figure(resolution = (1600, 600))
+gb = f[1,2] = GridLayout()
+gb1 = gb[1,1] = GridLayout()
+gb2 = gb[1,2] = GridLayout()
+ga = f[1,1] = GridLayout()
+
+# Dummy figure for panel (a) 
+ax0 = Axis(ga[1,1]; print_args...)
+scatter!(ax0, [0,0], [1,1])
 
 res = 4500
 μ = range(-1.3, -0.7, length = 40)
@@ -74,30 +86,27 @@ xg = range(-1, 1, length = res)
 yg = range(-1, 1, length = res)
 Sb, Sbb = compute_Sb_fig(μ, xg, yg)
 
-fig = Figure(resolution = (1024, 768))
-ax = Axis(fig[1,1], ylabel = L"S_b", xlabel = L"$\mu$"; print_args...)
-# ax2 = Axis(fig[2,1], ylabel = L"S_{bb}", xlabel = L"$\mu$"; print_args...)
+ax = Axis(gb1[1,1], ylabel = L"S_b", xlabel = L"$\mu$"; print_args...)
 scatter!(ax, μ, Sb, markersize = 10, color = :black)
-# scatter!(ax2, μ, Sbb, markersize = 10, color = :black)
-save("fig3_hopf.svg",fig)
-save("fig3_hopf.png",fig)
 
 # Inset 1.
-bas, att, sb ,sbb= _get_datas(-1.5, xg, yg)
-fig = Figure(resolution = (600, 600))
-ax = Axis(fig[1,1];  print_args...)
+xg = yg =  range(-1, 1, length = 200); μ = -1.5
+@unpack basins = _get_hopf(@dict(μ,xg,yg))
+ax1 = Axis(gb2[1,1]; ylabel = L"y_n", xlabel = L"x_n",  print_args...)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
-heatmap!(ax, xg, yg, bas; colormap = cmap, rastersize = 1)
-save("fig3_hopf_inset1.png",fig)
+lp1 = heatmap!(ax1, xg, yg, basins; colormap = cmap)
+lp1.rasterize = 10
 
-bas, att, sb, sbb = _get_datas(-0.9, xg, yg)
-fig = Figure(resolution = (600, 600))
-ax = Axis(fig[1,1]; print_args...)
-heatmap!(ax, xg, yg, bas; colormap = cmap, rastersize = 1)
-save("fig3_hopf_inset2.png",fig)
+xg = yg =  range(-1, 1, length = 200); μ = -0.5
+@unpack basins = _get_hopf(@dict(μ,xg,yg))
+ax1 = Axis(gb2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+lp2 = heatmap!(ax1, xg, yg, basins; colormap = cmap)
+lp2.rasterize = 10
 
-bas, att, sb, sbb = _get_datas(-0.5, xg, yg)
-fig = Figure(resolution = (600, 600))
-ax = Axis(fig[1,1]; print_args...)
-heatmap!(ax, xg, yg, bas; colormap = cmap, rastersize = 1)
-save("fig3_hopf_inset3.png",fig)
+Label(ga[1, 1, TopLeft()], "(a)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
+Label(gb[1, 1, TopLeft()], "(b)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
+colsize!(f.layout, 1, Auto(0.7))
+colsize!(gb, 2, Auto(0.5))
+save("fig3.png",f)
+save("fig3.pdf",f)
+

@@ -1,3 +1,5 @@
+using DrWatson
+@quickactivate
 using DynamicalSystems
 using Attractors
 using JLD2
@@ -12,7 +14,6 @@ function pitchfork!(dz, z, p, t)
     dz[2] = 0.1*y 
     return
 end
-
 
 function _get_pitchfork(μ, xg, yg)
     ds = DiscreteDynamicalSystem(pitchfork!, [1.0, 0.0], μ, (J,z,p,n) -> nothing)
@@ -41,40 +42,33 @@ function compute_Sb_fig(μ, xg, yg)
     return Sb, Sbb
 end
 
-print_args = (; yticklabelsize = 40, 
-            xticklabelsize = 40, 
-            ylabelsize = 80, 
-            xlabelsize = 80, 
+print_args = (; yticklabelsize = 20, 
+            xticklabelsize = 20, 
+            ylabelsize = 40, 
+            xlabelsize = 40, 
             xticklabelfont = "cmr10", 
             yticklabelfont = "cmr10")
 cmap = ColorScheme([RGB(1,1,1), RGB(1,0,0), RGB(0,1,0), RGB(0,0,1)] )
 
 
+f = Figure(resolution = (1600, 600))
+ga = f[1,1] = GridLayout()
+gb = f[1,2] = GridLayout()
+
+# Dummy figure for panel (a) 
+ax0 = Axis(ga[1,1]; print_args...)
+scatter!(ax0, [0,0], [1,1])
 
 res = 151
 μ = range(0.5,1.5, length = 28)
 xg = range(-1, 1, length = res)
 yg = range(-1, 1, length = res)
 Sb, Sbb = compute_Sb_fig(μ, xg, yg)
-fig = Figure(resolution = (1024, 768))
-ax = Axis(fig[1,1], ylabel = L"S_b", xlabel = L"$\mu$"; print_args...)
+ax = Axis(gb[1,1], ylabel = L"S_b", xlabel = L"$\mu$"; print_args...)
 scatter!(ax, μ, Sb, markersize = 10, color = :black)
-save("fig2_pitch.svg",fig)
-save("fig2_pitch.png",fig)
 
-# save("bif_henon_500.jld2", "Sb", Sb, "Sbb", Sbb, "att_m", att_m) 
-
-# Inset 1.
-bas, att = _get_pitchfork(0.5, xg, yg)
-fig = Figure(resolution = (1024, 768))
-ax = Axis(fig[1,1], xlabel = L"x_n", ylabel = L"y_n"; print_args...)
-heatmap!(ax, xg, yg, bas; colormap = cmap, rastersize = 1)
-save("fig2_pitch_inset1.png",fig)
-
-bas, att = _get_pitchfork(1.5, xg, yg)
-fig = Figure(resolution = (1024, 768))
-ax = Axis(fig[1,1], xlabel = L"x_n", ylabel = L"y_n"; print_args...)
-lp = heatmap!(ax, xg, yg, bas; colormap = cmap, rastersize = 10.)
-lp.rasterize = 10
-save("fig2_pitch_inset2.png",fig)
-save("fig2_pitch_inset2.svg",fig)
+Label(ga[1, 1, TopLeft()], "(a)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
+Label(gb[1, 1, TopLeft()], "(b)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
+ colsize!(f.layout, 1, Auto(1))
+save("fig2.png",f)
+save("fig2.svg",f)
