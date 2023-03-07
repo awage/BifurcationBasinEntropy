@@ -61,23 +61,17 @@ function compute_Sb_fig(a, J, xg, yg)
     return Sb, Sbb
 end
 
-print_args = (; yticklabelsize = 20, 
-            xticklabelsize = 20, 
-            ylabelsize = 40, 
-            xlabelsize = 40, 
+
+print_args = (; yticklabelsize = 8, 
+            xticklabelsize = 8, 
+            ylabelsize = 14, 
+            xlabelsize = 14, 
             xticklabelfont = "cmr10", 
-            yticklabelfont = "cmr10")
+            yticklabelfont = "cmr10",
+            xticksize = 2,
+            yticksize = 2)
 
-
-f = Figure(resolution = (1600, 1000))
-ga = f[1,1] = GridLayout()
-gb = f[1,2] = GridLayout()
-gc = f[2,1] = GridLayout()
-gc1 = gc[1,1] = GridLayout()
-gc2 = gc[2,1] = GridLayout()
-gd = f[2,2] = GridLayout()
-gd1 = gd[1,1] = GridLayout()
-gd2 = gd[2,1] = GridLayout()
+size_cm = (7.5, 6); size_pt = 28.3 .* size_cm
 
 
 res = 4000
@@ -87,41 +81,53 @@ yg = range(-3, 12, length = res)
 a = range(1.394, 1.397, length = 40)
 J = 0.3
 Sb, Sbb = compute_Sb_fig(a, J, xg, yg)
-ax = Axis(gd1[1,1], ylabel = L"S_{b}"; print_args...)
-ax2 = Axis(gd2[1,1], ylabel = L"S_{bb}", xlabel = L"A"; print_args...)
-scatter!(ax, a, Sb, markersize = 10, color = :black)
-scatter!(ax2, a, Sbb, markersize = 10, color = :black)
+f = Figure(resolution = size_pt)
+g = f[1,1] = GridLayout()
+ax = Axis(g[1,1], ylabel = L"S_{b}"; xticklabelsvisible = false, print_args...)
+ax2 = Axis(g[2,1], ylabel = L"S_{bb}", xlabel = L"A"; print_args...)
+scatter!(ax, a, Sb;  markersize = 4, color = :black)
+scatter!(ax2, a, Sbb, markersize = 4, color = :black)
+
+rowgap!(g, 5)
+save("fig6d.png",f)
+save("fig6d.svg",f, pt_per_unit = 1)
+
 
 a = range(1.305, 1.325, length = 40)
 J = 0.3
 Sb, Sbb = compute_Sb_fig(a, J, xg, yg)
-ax = Axis(gc1[1,1], ylabel = L"S_{b}"; print_args...)
-ax2 = Axis(gc2[1,1], ylabel = L"S_{bb}", xlabel = L"A"; print_args...)
-scatter!(ax, a, Sb, markersize = 10, color = :black)
-scatter!(ax2, a, Sbb, markersize = 10, color = :black)
+f = Figure(resolution = size_pt)
+g = f[1,1] = GridLayout()
+ax = Axis(g[1,1], ylabel = L"S_{b}"; xticklabelsvisible = false, print_args...)
+ax2 = Axis(g[2,1], ylabel = L"S_{bb}", xlabel = L"A"; print_args...)
+scatter!(ax, a, Sb, markersize = 4, color = :black)
+scatter!(ax2, a, Sbb, markersize = 4, color = :black)
+
+rowgap!(g, 5)
+save("fig6c.png",f)
+save("fig6c.svg",f, pt_per_unit = 1)
 
 
 
-
+size_cm = (6, 5); size_pt = 28 .* size_cm
 res = 1000
 # SADDLE NODE 0 to 1 state. 
 xg = range(-3, 3, length = res)
 yg = range(-3, 12, length = res)
 bas,s,ss = _get_datas(1.305, J, xg, yg)
-ax = Axis(ga[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+f = Figure(resolution = size_pt)
+ax = Axis(f[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
+save("fig6a.png",f)
+save("fig6a.svg",f, pt_per_unit = 1)
 
 bas,s,ss = _get_datas(1.36, J, xg, yg)
 fig = Figure(resolution = (1024, 768))
-ax = Axis(gb[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+f = Figure(resolution = size_pt)
+ax = Axis(f[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
-
-Label(ga[1, 1, TopLeft()], "(a)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-Label(gb[1, 1, TopLeft()], "(b)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-Label(gc[1, 1, TopLeft()], "(c)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-Label(gd[1, 1, TopLeft()], "(d)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-save("fig6.png",f)
-save("fig6.svg",f)
+save("fig6b.png",f)
+save("fig6b.svg",f, pt_per_unit = 1)
 

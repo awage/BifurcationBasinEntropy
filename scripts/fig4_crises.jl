@@ -59,53 +59,56 @@ function compute_Sb_fig(a, J, xg, yg)
     return Sb, Sbb
 end
 
-print_args = (; yticklabelsize = 20, 
-            xticklabelsize = 20, 
-            ylabelsize = 40, 
-            xlabelsize = 40, 
+print_args = (; yticklabelsize = 8, 
+            xticklabelsize = 8, 
+            ylabelsize = 14, 
+            xlabelsize = 14, 
             xticklabelfont = "cmr10", 
+            yticklabelfont = "cmr10",
+            xticksize = 2,
+            yticksize = 2)
+print_args1 = (; yticklabelsize = 6, 
+            xticklabelsize = 6, 
+            ylabelsize = 8, 
+            xlabelsize = 8, 
+            xticklabelfont = "cmr10", 
+            xticksize = 2,
+            yticksize = 2,
             yticklabelfont = "cmr10")
-cmap = ColorScheme([RGB(1,1,1), RGB(1,0,0), RGB(0,1,0), RGB(0,0,1)] )
 
 
-f = Figure(resolution = (1600, 600))
-gb = f[1,2] = GridLayout()
+size_cm = (12, 7); size_pt = 28 .* size_cm
+f = Figure(resolution = size_pt)
+gb = f[1,1] = GridLayout()
 gb1 = gb[1,1] = GridLayout()
 gb2 = gb[1,2] = GridLayout()
-ga = f[1,1] = GridLayout()
 
-# Dummy figure for panel (a) 
-ax0 = Axis(ga[1,1]; print_args...)
-scatter!(ax0, [0,0], [1,1])
 
 res = 1500
 # SADDLE NODE 0 to 1 state. 
-xg = range(-3, 3, length = res)
-yg = range(-20, 3, length = res)
-a = range(1.85, 1.92, length = 40)
-J = 0.05
+xg = range(-3, 3, length = res); yg = range(-20, 3, length = res)
+a = range(1.85, 1.92, length = 40); J = 0.05
 Sb, Sbb = compute_Sb_fig(a, J, xg, yg)
 
 ax = Axis(gb1[1,1], ylabel = L"S_b", xlabel = L"A"; print_args...)
-scatter!(ax, a, Sb, markersize = 10, color = :black)
+scatter!(ax, a, Sb, markersize = 4, color = :black)
 
 # Inset 1. A1
 bas, att, sb, sbb = _get_datas(1.8874, J, xg, yg)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
-ax = Axis(gb2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+ax = Axis(gb2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args1...)
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
 
 # Inset 2. A1
 bas, att, sb, sbb = _get_datas(1.95, J, xg, yg)
-ax = Axis(gb2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+ax = Axis(gb2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args1...)
 cmap = ColorScheme([RGB(230/255,230/255,230/255)])
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
 
 
-Label(ga[1, 1, TopLeft()], "(a)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-Label(gb[1, 1, TopLeft()], "(b)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-colsize!(f.layout, 1, Auto(0.7))
-colsize!(gb, 2, Auto(0.5))
-save("fig4.png",f)
-save("fig4.svg",f)
+colsize!(gb, 2, Auto(0.35))
+rowgap!(gb2, 2)
+colgap!(gb, 2)
+save("fig4b.png",f)
+save("fig4b.svg",f, pt_per_unit = 1)
 

@@ -42,33 +42,25 @@ function compute_Sb_fig(μ, xg, yg)
     return Sb, Sbb
 end
 
-print_args = (; yticklabelsize = 20, 
-            xticklabelsize = 20, 
-            ylabelsize = 40, 
-            xlabelsize = 40, 
+print_args = (; yticklabelsize = 8, 
+            xticklabelsize = 8, 
+            ylabelsize = 14, 
+            xlabelsize = 14, 
             xticklabelfont = "cmr10", 
-            yticklabelfont = "cmr10")
-cmap = ColorScheme([RGB(1,1,1), RGB(1,0,0), RGB(0,1,0), RGB(0,0,1)] )
+            yticklabelfont = "cmr10",
+            xticksize = 2,
+            yticksize = 2)
 
-
-f = Figure(resolution = (1600, 600))
-ga = f[1,1] = GridLayout()
-gb = f[1,2] = GridLayout()
-
-# Dummy figure for panel (a) 
-ax0 = Axis(ga[1,1]; print_args...)
-scatter!(ax0, [0,0], [1,1])
+size_cm = (8, 7); size_pt = 28.3 .* size_cm
+f = Figure(resolution = size_pt)
 
 res = 151
 μ = range(0.5,1.5, length = 28)
 xg = range(-1, 1, length = res)
 yg = range(-1, 1, length = res)
 Sb, Sbb = compute_Sb_fig(μ, xg, yg)
-ax = Axis(gb[1,1], ylabel = L"S_b", xlabel = L"$\mu$"; print_args...)
-scatter!(ax, μ, Sb, markersize = 10, color = :black)
+ax = Axis(f[1,1], ylabel = L"S_b", xlabel = L"$\mu$"; print_args...)
+scatter!(ax, μ, Sb, markersize = 4, color = :black)
 
-Label(ga[1, 1, TopLeft()], "(a)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-Label(gb[1, 1, TopLeft()], "(b)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
- colsize!(f.layout, 1, Auto(1))
-save("fig2.png",f)
-save("fig2.svg",f)
+save("fig2b.png",f)
+save("fig2b.svg",f, pt_per_unit = 1)

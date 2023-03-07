@@ -71,75 +71,80 @@ function print_basins(xg, yg, bas, cmap, print_args, fname)
     save(fname,fig)
 end
 
-print_args = (; yticklabelsize = 20, 
-            xticklabelsize = 20, 
-            ylabelsize = 40, 
-            xlabelsize = 40, 
+print_args1 = (; yticklabelsize = 8, 
+            xticklabelsize = 8, 
+            ylabelsize = 14, 
+            xlabelsize = 14, 
             xticklabelfont = "cmr10", 
+            yticklabelfont = "cmr10",
+            xticksize = 2,
+            yticksize = 2)
+print_args = (; yticklabelsize = 6, 
+            xticklabelsize = 6, 
+            ylabelsize = 8, 
+            xlabelsize = 8, 
+            xticklabelfont = "cmr10", 
+            xticksize = 2,
+            yticksize = 2,
             yticklabelfont = "cmr10")
 
-
-f = Figure(resolution = (1600, 1000))
-ga = f[1,2] = GridLayout()
-ga1 = ga[1,1] = GridLayout()
-ga2 = ga[1,2] = GridLayout()
-gb = f[2,1] = GridLayout()
+size_cm = (12, 7); size_pt = 28.3 .* size_cm
+f = Figure(resolution = size_pt)
+gb = f[1,1] = GridLayout()
 gb1 = gb[1,1] = GridLayout()
 gb2 = gb[1,2] = GridLayout()
-gc = f[1,1] = GridLayout()
-
-# Dummy figure for panel (a) 
-ax0 = Axis(gc[1,1]; print_args...)
-scatter!(ax0, [0,0], [1,1])
+g = Figure(resolution = size_pt)
+gc = g[1,1] = GridLayout()
+gc1 = gc[1,1] = GridLayout()
+gc2 = gc[1,2] = GridLayout()
 
 # Panel (c) FOR SADDLE NODE ( period 3 within another basin): 
+res = 1500
 xg = range(-3, 3, length = res); yg = range(-100, 80, length = res)
 a = range(1.6, 1.65, length = 40); J = 0.05
 Sb, Sbb = compute_Sb_fig(a, J, xg, yg)
-
-ax = Axis(gb1[1,1], ylabel = L"S_b", xlabel = L"A"; print_args...)
-scatter!(ax, a, Sb, markersize = 10, color = :black)
+ax = Axis(gc1[1,1], ylabel = L"S_b", xlabel = L"A"; print_args1...)
+scatter!(ax, a, Sb, markersize = 4, color = :black)
 
 xg = range(-2.5, -1, length = 200); yg = range(-20, 20, length = 200); A = 1.6293745;
 @unpack basins = _get_basins_henon(@dict(A,J,xg,yg))
-# basins, att, sb, sbb = _get_datas(1.6293745,J,xg,yg)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0), RGB(0,0,1), RGB(1,85/255,85/255)] )
-ax4 = Axis(gb2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
-lp2 = heatmap!(ax4, xg, yg, basins; colormap = cmap, rasterize = 4)
-# lp2.rasterize = 4
+ax4 = Axis(gc2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+heatmap!(ax4, xg, yg, basins; colormap = cmap, rasterize = 4)
 
 xg = range(-2.5, -1, length = 200); yg = range(-20, 20, length = 200); A = 1.629375;
 @unpack basins = _get_basins_henon(@dict(A,J,xg,yg))
-# basins, att, sb, sbb = _get_datas(1.629375,J,xg,yg)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255), RGB(0,0,1)] )
-ax5 = Axis(gb2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
-lp = heatmap!(ax5, xg, yg, basins; colormap = cmap, rasterize = 4)
-# lp.rasterize = 4
+ax5 = Axis(gc2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+heatmap!(ax5, xg, yg, basins; colormap = cmap, rasterize = 4)
 
+colsize!(gc, 2, Auto(0.35))
+rowgap!(gc2, 5)
+colgap!(gc, 5)
+save("fig1c.png",g)
+save("fig1c.pdf",g)
+save("fig1c.svg",g, pt_per_unit = 1.)
 
 # SADDLE NODE 0 to 1 state. 
 xg = range(-3, 3, length = res); yg = range(-20, 3, length = res)
 a = range(-0.41, -0.43, length = 40); J = 0.3
 Sb, Sbb = compute_Sb_fig(a, J, xg, yg)
-ax = Axis(ga1[1,1], ylabel = L"S_b", xlabel = L"A"; print_args...)
-scatter!(ax, a, Sb, markersize = 10, color = :black)
+ax = Axis(gb1[1,1], ylabel = L"S_b", xlabel = L"A"; print_args1...)
+scatter!(ax, a, Sb, markersize = 4, color = :black)
 
 basins, att, sb, sbb = _get_datas(-0.423,J,xg,yg)
 cmap = ColorScheme([RGB(230/255,230/255,230/255)] )
-ax4 = Axis(ga2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+ax4 = Axis(gb2[2,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
 lp2 = heatmap!(ax4, xg, yg, basins; colormap = cmap, rasterize = 4)
-# lp2.rasterize = 4
+
 basins, att, sb, sbb = _get_datas(-0.421,J,xg,yg)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(0,0,1), RGB(1,85/255,85/255)] )
-ax5 = Axis(ga2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+ax5 = Axis(gb2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
 lp = heatmap!(ax5, xg, yg, basins; colormap = cmap, rasterize = 4)
-# lp.rasterize = 4
-colsize!(ga, 2, Auto(0.5))
-colsize!(gb, 2, Auto(0.5))
-colsize!(f.layout, 1, Auto(1))
-Label(ga[1, 1, TopLeft()], "(b)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-Label(gb[1, 1, TopLeft()], "(c)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-Label(gc[1, 1, TopLeft()], "(a)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-save("fig1.png",f)
-save("fig1.pdf",f)
-save("fig1.svg",f)
+
+colsize!(gb, 2, Auto(0.35))
+rowgap!(gb2, 5)
+colgap!(gb, 5)
+save("fig1b.png",f)
+save("fig1b.svg",f, pt_per_unit = 1.)
+save("fig1b.pdf",f, pt_per_unit = 1.)

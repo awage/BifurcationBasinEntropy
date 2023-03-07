@@ -62,23 +62,28 @@ function compute_Sb_fig(μ, xg, yg)
 end
 
 
-print_args = (; yticklabelsize = 20, 
-            xticklabelsize = 20, 
-            ylabelsize = 40, 
-            xlabelsize = 40, 
+print_args = (; yticklabelsize = 8, 
+            xticklabelsize = 8, 
+            ylabelsize = 14, 
+            xlabelsize = 14, 
             xticklabelfont = "cmr10", 
+            yticklabelfont = "cmr10",
+            xticksize = 2,
+            yticksize = 2)
+print_args1 = (; yticklabelsize = 6, 
+            xticklabelsize = 6, 
+            ylabelsize = 8, 
+            xlabelsize = 8, 
+            xticklabelfont = "cmr10", 
+            xticksize = 2,
+            yticksize = 2,
             yticklabelfont = "cmr10")
-cmap = ColorScheme([RGB(1,1,1), RGB(1,0,0), RGB(0,1,0), RGB(0,0,1)] )
 
-f = Figure(resolution = (1600, 600))
-gb = f[1,2] = GridLayout()
+size_cm = (12, 7); size_pt = 28.3 .* size_cm
+f = Figure(resolution = size_pt)
+gb = f[1,1] = GridLayout()
 gb1 = gb[1,1] = GridLayout()
 gb2 = gb[1,2] = GridLayout()
-ga = f[1,1] = GridLayout()
-
-# Dummy figure for panel (a) 
-ax0 = Axis(ga[1,1]; print_args...)
-scatter!(ax0, [0,0], [1,1])
 
 res = 4500
 μ = range(-1.3, -0.7, length = 40)
@@ -87,27 +92,27 @@ yg = range(-1, 1, length = res)
 Sb, Sbb = compute_Sb_fig(μ, xg, yg)
 
 ax = Axis(gb1[1,1], ylabel = L"S_b", xlabel = L"$\mu$"; print_args...)
-scatter!(ax, μ, Sb, markersize = 10, color = :black)
+scatter!(ax, μ, Sb, markersize = 4, color = :black)
 
 # Inset 1.
 xg = yg =  range(-1, 1, length = 200); μ = -1.5
 @unpack basins = _get_hopf(@dict(μ,xg,yg))
-ax1 = Axis(gb2[2,1]; ylabel = L"y_n", xlabel = L"x_n",  print_args...)
+ax1 = Axis(gb2[2,1]; ylabel = L"y_n", xlabel = L"x_n",  print_args1...)
 cmap = ColorScheme([RGB(230/255,230/255,230/255)])
 lp1 = heatmap!(ax1, xg, yg, basins; colormap = cmap)
 lp1.rasterize = 10
 
 xg = yg =  range(-1, 1, length = 200); μ = -0.5
 @unpack basins = _get_hopf(@dict(μ,xg,yg))
-ax1 = Axis(gb2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
+ax1 = Axis(gb2[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args1...)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
 lp2 = heatmap!(ax1, xg, yg, basins; colormap = cmap)
 lp2.rasterize = 10
 
-Label(ga[1, 1, TopLeft()], "(a)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-Label(gb[1, 1, TopLeft()], "(b)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-colsize!(f.layout, 1, Auto(0.7))
-colsize!(gb, 2, Auto(0.5))
-save("fig3.png",f)
-save("fig3.svg",f)
+
+colsize!(gb, 2, Auto(0.35))
+rowgap!(gb2, 2)
+colgap!(gb, 2)
+save("fig3b.png",f)
+save("fig3b.svg",f, pt_per_unit = 1)
 

@@ -103,23 +103,27 @@ print_args = (; yticklabelsize = 40,
 end
 
 
-print_args = (; yticklabelsize = 20, 
-            xticklabelsize = 20, 
-            ylabelsize = 40, 
-            xlabelsize = 40, 
+print_args = (; yticklabelsize = 8, 
+            xticklabelsize = 8, 
+            ylabelsize = 14, 
+            xlabelsize = 14, 
             xticklabelfont = "cmr10", 
+            yticklabelfont = "cmr10",
+            xticksize = 2,
+            yticksize = 2)
+print_args1 = (; yticklabelsize = 6, 
+            xticklabelsize = 6, 
+            ylabelsize = 8, 
+            xlabelsize = 8, 
+            xticklabelfont = "cmr10", 
+            xticksize = 2,
+            yticksize = 2,
             yticklabelfont = "cmr10")
-cmap = ColorScheme([RGB(1,1,1), RGB(1,0,0), RGB(0,1,0), RGB(0,0,1)] )
 
-
-
-f = Figure(resolution = (1600, 1000))
+size_cm = (12, 8); size_pt = 28.3 .* size_cm
+f = Figure(resolution = size_pt)
 ga = f[1,1] = GridLayout()
-ga1 = ga[1,1] = GridLayout()
-ga2 = ga[2,1] = GridLayout()
 gb = f[1,2] = GridLayout()
-gb1 = gb[1,1] = GridLayout()
-gb2 = gb[2,1] = GridLayout()
 
 
 res = 1000
@@ -128,29 +132,30 @@ b = range(-1.32, -1.25, length = 100)
 a = -0.42
 Sb, Sbb = compute_Sb_fig_b(a, b, xg, yg)
 Sbb[isnan.(Sbb)] .= 0 
-ax2 = Axis(ga1[1,1], ylabel = L"S_b"; print_args...)
-ax3 = Axis(ga2[1,1], ylabel = L"S_{bb}", xlabel = L"b"; print_args...)
-scatter!(ax2, b, Sb, markersize = 10, color = :black)
-scatter!(ax3, b, Sbb, markersize = 10, color = :black)
+ax2 = Axis(ga[1,1], ylabel = L"S_b"; xticklabelsvisible = false, print_args...)
+ax3 = Axis(ga[2,1], ylabel = L"S_{bb}", xlabel = L"b"; print_args...)
+scatter!(ax2, b, Sb, markersize = 2, color = :black)
+scatter!(ax3, b, Sbb, markersize = 2, color = :black)
 
 
 xg = yg = range(-3, 3, length = res)
 bas,at,s,ss = _get_datas(a, -1.32, xg, yg)
-ax = Axis(gb1[1,1]; xlabel = L"$x_n$", ylabel = L"$y_n$", print_args...)
+ax = Axis(gb[1,1]; xlabel = L"$x_n$", ylabel = L"$y_n$", print_args1...)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
 lines!(ax, [-3, 3], [-1.32, -1.32])
 lines!(ax, [0,0], [-3, 3])
 
 bas,at,s,ss = _get_datas(a, -1.275, xg, yg)
-ax = Axis(gb2[1,1]; xlabel = L"$x_n$", ylabel = L"$y_n$", print_args...)
+ax = Axis(gb[2,1]; xlabel = L"$x_n$", ylabel = L"$y_n$", print_args1...)
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
 lines!(ax, [-3, 3], [-1.275, -1.275])
 lines!(ax, [0, 0], [-3, 3])
 
-Label(ga[1, 1, TopLeft()], "(a)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-Label(gb[1, 1, TopLeft()], "(b)", fontsize = 26, font = "cmr10", padding = (0, 5, 5, 20), halign = :right)
-colsize!(f.layout, 2, Auto(0.5))
+colsize!(f.layout, 2, Auto(0.4))
+rowgap!(ga, 5)
+rowgap!(gb, 5)
+colgap!(f.layout, 2)
 save("fig7.png",f)
-save("fig7.svg",f)
+save("fig7.svg",f, pt_per_unit = 1)
 
