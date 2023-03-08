@@ -1,14 +1,12 @@
 using DrWatson
 @quickactivate
-using DynamicalSystems
 using Attractors
-using StaticArrays
-using JLD2
 using CairoMakie
 using LaTeXStrings
 using Colors
 using ColorSchemes
 using OrdinaryDiffEq:Vern9
+
 function bt_form!(dz, z, p, t)
     x, y = z
     λ1 = p
@@ -20,19 +18,19 @@ end
 
 function _get_bt_form(di)
     @unpack λ1, xg, yg = di
-    ds = ContinuousDynamicalSystem(bt_form!, [1.0, 0.0], λ1, (J,z,p,n) -> nothing)
+    ds = CoupledODEs(bt_form!, [1.0, 0.0], λ1)
     xgg = range(-20, 20, length = 5000)
     ygg = range(-20, 20, length = 5000)
     grid = (xgg, ygg)
     diffeq = (alg = Vern9(), reltol = 1e-9, maxiters = 1e8)
-    mapper = Attractors.AttractorsViaRecurrences(ds, grid; 
+    mapper = AttractorsViaRecurrences(ds, grid; 
             mx_chk_fnd_att = 3000, sparse = true, 
             mx_chk_loc_att = 3000,
             mx_chk_att = 2, diffeq)
     grid = (xg, yg)
-    basins, att = Attractors.basins_of_attraction(mapper, grid; show_progress = true)
-    sb, sbb =  Attractors.basin_entropy(basins)
-    t, sbb = Attractors.basins_fractal_test(basins)
+    basins, att = basins_of_attraction(mapper, grid; show_progress = true)
+    sb, sbb =  basin_entropy(basins)
+    t, sbb = basins_fractal_test(basins)
     return @strdict(basins, att, sb, sbb, t, xg, yg)
 end
 
@@ -43,7 +41,6 @@ function _get_datas(λ1, xg, yg)
         _get_bt_form, # function
         prefix = "basins_homocl", # prefix for savename
         force = false,
-        digits = 5,
         wsave_kwargs = (;compress = true)
     )
     @unpack basins, sb, sbb = data
@@ -60,8 +57,8 @@ function compute_Sb_fig(a, xg, yg)
         bas2[bas .== 1] .= 1
         bas2[bas .== 2] .= 1
         bas2[bas .== 3] .= 1
-        sb, sbb =  Attractors.basin_entropy(bas2)
-        t, sbb = Attractors.basins_fractal_test(bas2)
+        sb, sbb =  basin_entropy(bas2)
+        t, sbb = basins_fractal_test(bas2)
         Sb[j] = sb
         Sbb[j] = sbb
     end

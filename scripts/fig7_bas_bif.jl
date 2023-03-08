@@ -1,7 +1,5 @@
 using DrWatson
 @quickactivate
-using DynamicalSystems
-using JLD2
 using Attractors
 using CairoMakie
 using LaTeXStrings
@@ -21,17 +19,16 @@ end
 function _get_basins_quadratic(di)
     @unpack a, b, xg, yg = di
     u0 = [0., 0.6]
-    ds = DiscreteDynamicalSystem(quadratic_map!, [1.0, 0.0], [a, b], (J,z,p,n) -> nothing)
+    ds = DeterministicIteratedMap(quadratic_map!, [1.0, 0.0], [a, b])
     xgg = range(-10, 10, length = 4001)
     ygg = range(-10, 10, length = 4001)
     grid = (xgg, ygg)
-    mapper = Attractors.AttractorsViaRecurrences(ds, grid;
+    mapper = AttractorsViaRecurrences(ds, grid;
             mx_chk_fnd_att = 3000,
             mx_chk_loc_att = 3000, sparse = true)
     grid = (xg,yg)
-    basins, att = Attractors.basins_of_attraction(mapper, grid; show_progress = true)
-    sb, sbb =  Attractors.basin_entropy(basins)
-    # t, sbb = Attractors.basins_fractal_test(basins)
+    basins, att = basins_of_attraction(mapper, grid; show_progress = true)
+    sb, sbb =  basin_entropy(basins)
     return @strdict(basins, att, sb, sbb,  xg, yg)
 end
 
@@ -42,7 +39,6 @@ function _get_datas(a, b, xg, yg)
         _get_basins_quadratic, # function
         prefix = "basins_quadratic", # prefix for savename
         force = false,
-        digits = 5,
         wsave_kwargs = (;compress = true)
     )
     @unpack basins, att, sb, sbb = data
@@ -53,12 +49,9 @@ function compute_Sb_fig_b(a, b, xg, yg)
     Sb =zeros(length(b))
     Sbb =zeros(length(b))
     for j in 1:length(b)
-        @show b[j]
         bas, att, sb, sbb = _get_datas(a, b[j], xg, yg)
-        # sb, sbb =  attractors.basin_entropy(bas)
-        # t, sbb = attractors.basins_fractal_test(bas)
         if isnan(sbb)
-                sbb = 0
+            sbb = 0
         end
         Sb[j] = sb
         Sbb[j] = sbb

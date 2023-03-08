@@ -1,8 +1,6 @@
 using DrWatson
 @quickactivate
-using DynamicalSystems
 using Attractors
-using JLD2
 using CairoMakie
 using LaTeXStrings
 using Colors
@@ -19,17 +17,17 @@ end
 
 function _get_hopf(di)
     @unpack μ,xg,yg  = di
-    ds = DiscreteDynamicalSystem(hopf!, [1.0, 0.0], [μ, 0.9], (J,z,p,n) -> nothing)
+    ds = DeterministicIteratedMap(hopf!, [1.0, 0.0], [μ, 0.9])
     xgg = range(-5, 5, length = 5001)
     ygg = range(-5, 5, length = 5001)
     grid = (xgg, ygg)
-    mapper = Attractors.AttractorsViaRecurrences(ds, grid; 
+    mapper = AttractorsViaRecurrences(ds, grid; 
             mx_chk_fnd_att = 10000,
             mx_chk_loc_att = 10000,
             mx_chk_att = 2)
     grid = (xg, yg)
-    basins, att = Attractors.basins_of_attraction(mapper, grid; show_progress = true)
-    sb, sbb =  Attractors.basin_entropy(basins,  20)
+    basins, att = basins_of_attraction(mapper, grid; show_progress = true)
+    sb, sbb =  basin_entropy(basins,  20)
     return @strdict(basins, att, sb, sbb, xg, yg)
 end
 
@@ -40,7 +38,6 @@ function _get_datas(μ, xg, yg)
         _get_hopf, # function
         prefix = "basins_hopf", # prefix for savename
         force = false,
-        digits = 5,
         wsave_kwargs = (;compress = true)
     )
     @unpack basins,att,sb,sbb = data
@@ -54,7 +51,6 @@ function compute_Sb_fig(μ, xg, yg)
     for j in 1:length(μ)
         @show μ[j]
         bas,att, sb, sbb= _get_datas(μ[j], xg, yg)
-        # sb, sbb =  Attractors.basin_entropy(bas,  20)
         Sb[j] = sb
         Sbb[j] = sbb
     end

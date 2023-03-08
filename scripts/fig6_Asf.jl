@@ -1,8 +1,6 @@
 using DrWatson
 @quickactivate
-using DynamicalSystems
-using StaticArrays
-using JLD2
+using Attractors
 using CairoMakie
 using LaTeXStrings
 using Colors
@@ -21,15 +19,15 @@ end
 function _get_basins_henon(di)
     @unpack A, J, xg, yg = di
     u0 = [0., 0.6]
-    ds = DiscreteDynamicalSystem(henon_map!, [1.0, 0.0], [A, J], (J,z,p,n) -> nothing)
+    ds = DeterministicIteratedMap(henon_map!, [1.0, 0.0], [A, J])
     grid = (xg, yg)
-    mapper = Attractors.AttractorsViaRecurrences(ds, grid,
+    mapper = AttractorsViaRecurrences(ds, grid,
             mx_chk_fnd_att = 3000,
             mx_chk_loc_att = 3000,
             mx_chk_att = 2)
-    basins, att = Attractors.basins_of_attraction(mapper, grid; show_progress = true)
-    sb, sbb =  Attractors.basin_entropy(basins)
-    t, sbb = Attractors.basins_fractal_test(basins)
+    basins, att = basins_of_attraction(mapper, grid; show_progress = true)
+    sb, sbb =  basin_entropy(basins)
+    t, sbb = basins_fractal_test(basins)
     return @strdict(basins, att, sb, sbb, t, xg, yg)
 end
 
@@ -40,7 +38,6 @@ function _get_datas(A, J, xg, yg)
         _get_basins_henon, # function
         prefix = "basins_henon", # prefix for savename
         force = false,
-        digits = 5,
         wsave_kwargs = (;compress = true)
     )
     @unpack basins, sb, sbb = data

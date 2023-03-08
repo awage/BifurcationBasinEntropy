@@ -1,12 +1,8 @@
 using DrWatson
 @quickactivate
-using DynamicalSystems
 using Attractors
-using JLD2
 using CairoMakie
 using LaTeXStrings
-using Colors
-using ColorSchemes
 
 function pitchfork!(dz, z, p, t)
     x, y = z
@@ -16,16 +12,16 @@ function pitchfork!(dz, z, p, t)
 end
 
 function _get_pitchfork(μ, xg, yg)
-    ds = DiscreteDynamicalSystem(pitchfork!, [1.0, 0.0], μ, (J,z,p,n) -> nothing)
+    ds = DeterministicIteratedMap(pitchfork!, [1.0, 0.0], μ)
     xgg = range(-2, 2, length = 5000)
     ygg = range(-1, 1, length = 5000)
     grid = (xgg, ygg)
-    mapper = Attractors.AttractorsViaRecurrences(ds, grid; 
+    mapper = AttractorsViaRecurrences(ds, grid; 
             mx_chk_fnd_att = 10000,
             mx_chk_loc_att = 10000,
             mx_chk_att = 2)
     grid = (xg, yg)
-    basins, att = Attractors.basins_of_attraction(mapper, grid; show_progress = true)
+    basins, att = basins_of_attraction(mapper, grid; show_progress = true)
     return basins,att 
 end
 
@@ -35,7 +31,7 @@ function compute_Sb_fig(μ, xg, yg)
     for j in 1:length(μ)
         @show μ[j]
         bas,att = _get_pitchfork(μ[j], xg, yg)
-        sb, sbb =  Attractors.basin_entropy(bas)
+        sb, sbb =  basin_entropy(bas)
         Sb[j] = sb
         Sbb[j] = sbb
     end

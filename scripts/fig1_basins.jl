@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate
-using DynamicalSystems
-using Attractors 
+#using DynamicalSystems
+using Attractors
 using JLD2
 using CairoMakie
 using LaTeXStrings
@@ -13,7 +13,7 @@ function henon_map!(dz, z, p, n)
     xn, yn = z
     A, J = p
     dz[1] = A - xn^2 - J*yn
-    dz[2] = xn  
+    dz[2] = xn
     return
 end
 
@@ -21,7 +21,7 @@ end
 function _get_basins_henon(di)
     @unpack A, J, xg, yg = di
     u0 = [0., 0.6]
-    ds = DiscreteDynamicalSystem(henon_map!, [1.0, 0.0], [A, J], (J,z,p,n) -> nothing)
+    ds = DeterministicIteratedMap(henon_map!, [1.0, 0.0], [A, J])
     xgg = range(-5, 5, length = 10000)
     ygg = range(-20, 20, length = 10000)
     grid = (xgg, ygg)
@@ -37,21 +37,21 @@ function _get_basins_henon(di)
 end
 
 function _get_datas(A, J, xg, yg)
+    filename = config -> savename("basins_henon", config; digits = 5)
     data, file = produce_or_load(
         datadir("basins"), # path
         @dict(A, J, xg, yg), # container
-        _get_basins_henon, # function
-        prefix = "basins_henon", # prefix for savename
+        _get_basins_henon; # function
+        filename,
         force = false,
-        digits = 5,
-        wsave_kwargs = (;compress = true)
+        wsave_kwargs = Dict(:compress => true)
     )
     @unpack basins,att,sb,sbb = data
     return basins,att,sb,sbb
 end
 
 
-function compute_Sb_fig(a, J, xg, yg) 
+function compute_Sb_fig(a, J, xg, yg)
     Sb =zeros(length(a))
     Sbb =zeros(length(a))
     for j in 1:length(a)
@@ -71,19 +71,19 @@ function print_basins(xg, yg, bas, cmap, print_args, fname)
     save(fname,fig)
 end
 
-print_args1 = (; yticklabelsize = 8, 
-            xticklabelsize = 8, 
-            ylabelsize = 14, 
-            xlabelsize = 14, 
-            xticklabelfont = "cmr10", 
+print_args1 = (; yticklabelsize = 8,
+            xticklabelsize = 8,
+            ylabelsize = 14,
+            xlabelsize = 14,
+            xticklabelfont = "cmr10",
             yticklabelfont = "cmr10",
             xticksize = 2,
             yticksize = 2)
-print_args = (; yticklabelsize = 6, 
-            xticklabelsize = 6, 
-            ylabelsize = 8, 
-            xlabelsize = 8, 
-            xticklabelfont = "cmr10", 
+print_args = (; yticklabelsize = 6,
+            xticklabelsize = 6,
+            ylabelsize = 8,
+            xlabelsize = 8,
+            xticklabelfont = "cmr10",
             xticksize = 2,
             yticksize = 2,
             yticklabelfont = "cmr10")
@@ -98,7 +98,7 @@ gc = g[1,1] = GridLayout()
 gc1 = gc[1,1] = GridLayout()
 gc2 = gc[1,2] = GridLayout()
 
-# Panel (c) FOR SADDLE NODE ( period 3 within another basin): 
+# Panel (c) FOR SADDLE NODE ( period 3 within another basin):
 res = 1500
 xg = range(-3, 3, length = res); yg = range(-100, 80, length = res)
 a = range(1.6, 1.65, length = 40); J = 0.05
@@ -125,7 +125,7 @@ save("fig1c.png",g)
 save("fig1c.pdf",g)
 save("fig1c.svg",g, pt_per_unit = 1.)
 
-# SADDLE NODE 0 to 1 state. 
+# SADDLE NODE 0 to 1 state.
 xg = range(-3, 3, length = res); yg = range(-20, 3, length = res)
 a = range(-0.41, -0.43, length = 40); J = 0.3
 Sb, Sbb = compute_Sb_fig(a, J, xg, yg)

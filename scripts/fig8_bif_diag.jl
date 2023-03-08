@@ -1,9 +1,7 @@
 using Distributed
 @everywhere using DrWatson
 @everywhere @quickactivate
-@everywhere using DynamicalSystems
 @everywhere using Attractors
-# @everywhere using StaticArrays
 @everywhere using JLD2
 using CairoMakie
 using LaTeXStrings
@@ -23,18 +21,18 @@ end
 @everywhere function _get_basins_henon(di)
     @unpack A, J, xg, yg = di
     u0 = [0., 0.6]
-    ds = DiscreteDynamicalSystem(henon_map!, [1.0, 0.0], [A, J], (J,z,p,n) -> nothing)
+    ds = DeterministicIteratedMap(henon_map!, [1.0, 0.0], [A, J])
     xgg = range(-5, 5, length = 10000)
     ygg = range(-20, 20, length = 10000)
     grid = (xgg, ygg)
-    mapper = Attractors.AttractorsViaRecurrences(ds, grid,
+    mapper = AttractorsViaRecurrences(ds, grid,
             mx_chk_fnd_att = 5000,
             mx_chk_loc_att = 5000,
             sparse = true)
     grid = (xg, yg)
-    basins, att = Attractors.basins_of_attraction(mapper, grid; show_progress = true)
-    sb, sbb =  Attractors.basin_entropy(basins)
-    t, sbb = Attractors.basins_fractal_test(basins)
+    basins, att = basins_of_attraction(mapper, grid; show_progress = true)
+    sb, sbb =  basin_entropy(basins)
+    t, sbb = basins_fractal_test(basins)
     return @strdict(basins, att, sb, sbb, t, xg, yg)
 end
 
@@ -45,7 +43,6 @@ end
         _get_basins_henon, # function
         prefix = "basins_henon", # prefix for savename
         force = false,
-        digits = 5,
         wsave_kwargs = (;compress = true)
     )
     @unpack att,sb,sbb = data
@@ -116,11 +113,12 @@ yg = range(-3, 12, length = res)
 a = range(1.0, 2, length = 2000)
 J = 0.3
 
-# pmap(k -> _get_datas(a[k], J, xg, yg), 1:length(a))
-# P, Sb, Sbb = compute_bif_diag(a,J)
-# Sb , Sbb = _get_sb(a,J)
-# save("bif_henon_J0.3.jld2", "P", P, "a", a, "J", J, "Sb", Sb, "Sbb", Sbb)
-#
+# Generate bifurcation diagram 
+pmap(k -> _get_datas(a[k], J, xg, yg), 1:length(a))
+P, Sb, Sbb = compute_bif_diag(a,J)
+Sb , Sbb = _get_sb(a,J)
+save("bif_henon_J0.3.jld2", "P", P, "a", a, "J", J, "Sb", Sb, "Sbb", Sbb)
+
 @load "bif_henon_J0.3.jld2"
 print_fig(a, P, Sb, Sbb, "fig8_bif_J0.3")
 
