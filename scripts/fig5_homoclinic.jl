@@ -18,15 +18,15 @@ end
 
 function _get_bt_form(di)
     @unpack λ1, xg, yg = di
-    ds = CoupledODEs(bt_form!, [1.0, 0.0], λ1)
+    diffeq = (alg = Vern9(), reltol = 1e-9, maxiters = 1e8)
+    ds = CoupledODEs(bt_form!, [1.0, 0.0], λ1; diffeq)
     xgg = range(-20, 20, length = 5000)
     ygg = range(-20, 20, length = 5000)
     grid = (xgg, ygg)
-    diffeq = (alg = Vern9(), reltol = 1e-9, maxiters = 1e8)
     mapper = AttractorsViaRecurrences(ds, grid; 
             mx_chk_fnd_att = 3000, sparse = true, 
             mx_chk_loc_att = 3000,
-            mx_chk_att = 2, diffeq)
+            mx_chk_att = 2)
     grid = (xg, yg)
     basins, att = basins_of_attraction(mapper, grid; show_progress = true)
     sb, sbb =  basin_entropy(basins)
