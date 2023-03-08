@@ -35,11 +35,12 @@ function _get_bt_form(di)
 end
 
 function _get_datas(λ1, xg, yg)
+    filename = config -> savename("basins_homocl", config; digits = 5)
     data, file = produce_or_load(
         datadir("basins"), # path
         @dict(λ1, xg, yg), # container
-        _get_bt_form, # function
-        prefix = "basins_homocl", # prefix for savename
+        _get_bt_form; # function
+        filename,
         force = false,
         wsave_kwargs = (;compress = true)
     )

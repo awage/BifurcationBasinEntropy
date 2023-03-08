@@ -32,11 +32,12 @@ function _get_hopf(di)
 end
 
 function _get_datas(μ, xg, yg)
+    filename = config -> savename("basins_hopf", config; digits = 5)
     data, file = produce_or_load(
         datadir("basins"), # path
         @dict(μ, xg, yg), # container
-        _get_hopf, # function
-        prefix = "basins_hopf", # prefix for savename
+        _get_hopf; # function
+        filename,
         force = false,
         wsave_kwargs = (;compress = true)
     )

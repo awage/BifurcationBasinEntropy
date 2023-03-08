@@ -33,11 +33,12 @@ function _get_basins_quadratic(di)
 end
 
 function _get_datas(a, b, xg, yg)
+    filename = config -> savename("basins_quadratic", config; digits = 5)
     data, file = produce_or_load(
         datadir("basins"), # path
         @dict(a, b, xg, yg), # container
-        _get_basins_quadratic, # function
-        prefix = "basins_quadratic", # prefix for savename
+        _get_basins_quadratic; # function
+        filename, 
         force = false,
         wsave_kwargs = (;compress = true)
     )

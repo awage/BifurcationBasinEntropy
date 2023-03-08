@@ -32,11 +32,12 @@ function _get_basins_henon(di)
 end
 
 function _get_datas(A, J, xg, yg)
+    filename = config -> savename("basins_henon", config; digits = 5)
     data, file = produce_or_load(
         datadir("basins"), # path
         @dict(A, J, xg, yg), # container
-        _get_basins_henon, # function
-        prefix = "basins_henon", # prefix for savename
+        _get_basins_henon; # function
+        filename,
         force = false,
         wsave_kwargs = (;compress = true)
     )
