@@ -5,4 +5,5 @@ include("fig4_crises.jl")
 include("fig5_homoclinic.jl")
 include("fig6_Asf.jl")
 include("fig7_bas_bif.jl")
+include("fig8_bif_diag.jl")
 

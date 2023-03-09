@@ -2,7 +2,8 @@ using Distributed
 @everywhere using DrWatson
 @everywhere @quickactivate
 @everywhere using Attractors
-@everywhere using JLD2
+@everywhere using CodecZlib
+using JLD2
 using CairoMakie
 using LaTeXStrings
 using Colors
@@ -37,13 +38,14 @@ end
 end
 
 @everywhere function _get_datas(A, J, xg, yg)
+    filename = config -> savename("basins_henon", config; digits = 5)
     data, file = produce_or_load(
         datadir("basins"), # path
         @dict(A, J, xg, yg), # container
-        _get_basins_henon, # function
-        prefix = "basins_henon", # prefix for savename
+        _get_basins_henon;
+        filename,
         force = false,
-        wsave_kwargs = (;compress = true)
+        wsave_kwargs = Dict(:compress => true)
     )
     @unpack att,sb,sbb = data
     return att,sb,sbb
@@ -86,16 +88,16 @@ function compute_bif_diag(a,J)
     Sb = zeros(length(a))
     Sbb = zeros(length(a))
     pnt_lst = Vector{Vector{Float64}}(undef,1)
-    df = DiscreteDynamicalSystem(henon_map!, [1.0, 0.0], [a[1], J], (J,z,p,n) -> nothing)
+    df = DeterministicIteratedMap(henon_map!, [1.0, 0.0], [a[1], J])
     for (k,ar) in enumerate(a)
         att,sb,sbb = _get_datas(a[k], J, nothing, nothing)
         Sb[k] = sb
         Sbb[k] = sbb
         if att ≠ 0 
             for p in att
-                set_parameter!(df, [a[k], J])
-                tra = trajectory(df, 20, p[2][1]; Ttr = 200000)
-                for y in tra
+                set_parameter!(df, 1, a[k])
+                tra = trajectory(df, 20, p[2][1]; Ttr = 200000, save_idxs = 1)
+                for y in tra[1]
                     v = [a[k], y[1]]
                     push!(pnt_lst, v)
                 end
