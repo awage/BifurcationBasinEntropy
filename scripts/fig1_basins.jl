@@ -36,7 +36,6 @@ function _get_basins_henon(di)
     grid = (xg, yg)
     basins, att = Attractors.basins_of_attraction(mapper, grid; show_progress = true)
     sb, sbb =  Attractors.basin_entropy(basins)
-    # t, sbb = Attractors.basins_fractal_test(basins)
     return @strdict(basins, att, sb, sbb, xg, yg)
 end
 
