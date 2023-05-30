@@ -1,3 +1,8 @@
+# Script to produce the Figure 7 of the paper 
+# Using basin entropy to explore bifurcations
+# MIT License
+# Copyright (c) 2023 Alexandre Wagemkakers
+# You should have received a copy of the license with this software. 
 using DrWatson
 @quickactivate
 using Attractors
@@ -6,7 +11,6 @@ using LaTeXStrings
 using Colors
 using ColorSchemes
 
-#using Suppressor
 function henon_map!(dz, z, p, n)
     xn, yn = z
     A, J = p
@@ -87,8 +91,8 @@ scatter!(ax, a, Sb;  markersize = 4, color = :black)
 scatter!(ax2, a, Sbb, markersize = 4, color = :black)
 
 rowgap!(g, 5)
-save("fig6d.png",f)
-save("fig6d.svg",f, pt_per_unit = 1)
+save("fig7d.png",f)
+save("fig7d.svg",f, pt_per_unit = 1)
 
 
 a = range(1.305, 1.325, length = 40)
@@ -102,8 +106,8 @@ scatter!(ax, a, Sb, markersize = 4, color = :black)
 scatter!(ax2, a, Sbb, markersize = 4, color = :black)
 
 rowgap!(g, 5)
-save("fig6c.png",f)
-save("fig6c.svg",f, pt_per_unit = 1)
+save("fig7c.png",f)
+save("fig7c.svg",f, pt_per_unit = 1)
 
 
 
@@ -117,8 +121,8 @@ f = Figure(resolution = size_pt)
 ax = Axis(f[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
-save("fig6a.png",f)
-save("fig6a.svg",f, pt_per_unit = 1)
+save("fig7a.png",f)
+save("fig7a.svg",f, pt_per_unit = 1)
 
 bas,s,ss = _get_datas(1.36, J, xg, yg)
 fig = Figure(resolution = (1024, 768))
@@ -126,6 +130,6 @@ f = Figure(resolution = size_pt)
 ax = Axis(f[1,1]; ylabel = L"y_n", xlabel = L"x_n", print_args...)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
-save("fig6b.png",f)
-save("fig6b.svg",f, pt_per_unit = 1)
+save("fig7b.png",f)
+save("fig7b.svg",f, pt_per_unit = 1)
 

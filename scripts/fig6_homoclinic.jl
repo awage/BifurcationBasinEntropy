@@ -1,3 +1,8 @@
+# Script to produce the Figure 6 of the paper 
+# Using basin entropy to explore bifurcations
+# MIT License
+# Copyright (c) 2023 Alexandre Wagemkakers
+# You should have received a copy of the license with this software. 
 using DrWatson
 @quickactivate
 using Attractors
@@ -121,5 +126,5 @@ heatmap!(ax, xg, yg, bas2; colormap = cmap, rasterize = 4)
 colsize!(gb, 2, Auto(0.35))
 rowgap!(gb2, 2)
 colgap!(gb, 2)
-save("fig5b.png",f)
-save("fig5b.svg",f, pt_per_unit = 1)
+save("fig6b.png",f)
+save("fig6b.svg",f, pt_per_unit = 1)

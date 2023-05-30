@@ -1,3 +1,8 @@
+# Script to produce the Figure 8 of the paper 
+# Using basin entropy to explore bifurcations
+# MIT License
+# Copyright (c) 2023 Alexandre Wagemkakers
+# You should have received a copy of the license with this software. 
 using DrWatson
 @quickactivate
 using Attractors
@@ -6,7 +11,6 @@ using LaTeXStrings
 using Colors
 using ColorSchemes
 
-#using Suppressor
 function quadratic_map!(dz, z, p, n)
     xn, yn = z
     a, b = p
@@ -150,6 +154,6 @@ colsize!(f.layout, 2, Auto(0.4))
 rowgap!(ga, 5)
 rowgap!(gb, 5)
 colgap!(f.layout, 2)
-save("fig7.png",f)
-save("fig7.svg",f, pt_per_unit = 1)
+save("fig8.png",f)
+save("fig8.svg",f, pt_per_unit = 1)
 

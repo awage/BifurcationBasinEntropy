@@ -1,14 +1,18 @@
+# Script to produce the Figure 1 and 2 of the paper 
+# Using basin entropy to explore bifurcations
+# MIT License
+# Copyright (c) 2023 Alexandre Wagemkakers
+# You should have received a copy of the license with this software. 
 using DrWatson
 @quickactivate
-#using DynamicalSystems
 using Attractors
 using JLD2
+using CodecZlib
 using CairoMakie
 using LaTeXStrings
 using Colors
 using ColorSchemes
 
-#using Suppressor
 function henon_map!(dz, z, p, n)
     xn, yn = z
     A, J = p
@@ -121,13 +125,13 @@ heatmap!(ax5, xg, yg, basins; colormap = cmap, rasterize = 4)
 colsize!(gc, 2, Auto(0.35))
 rowgap!(gc2, 5)
 colgap!(gc, 5)
-save("fig1c.png",g)
-save("fig1c.pdf",g)
-save("fig1c.svg",g, pt_per_unit = 1.)
+save("fig2b.png",g)
+save("fig2b.pdf",g)
+save("fig2b.svg",g, pt_per_unit = 1.)
 
 # SADDLE NODE 0 to 1 state.
 xg = range(-3, 3, length = res); yg = range(-20, 3, length = res)
-a = range(-0.41, -0.43, length = 40); J = 0.3
+a = range(-0.43, -0.41, length = 40); J = 0.3
 Sb, Sbb = compute_Sb_fig(a, J, xg, yg)
 ax = Axis(gb1[1,1], ylabel = L"S_b", xlabel = L"A"; print_args1...)
 scatter!(ax, a, Sb, markersize = 4, color = :black)

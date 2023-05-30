@@ -1,3 +1,8 @@
+# Script to produce the Figure 9 of the paper 
+# Using basin entropy to explore bifurcations
+# MIT License
+# Copyright (c) 2023 Alexandre Wagemkakers
+# You should have received a copy of the license with this software. 
 using Distributed
 @everywhere using DrWatson
 @everywhere @quickactivate
@@ -122,5 +127,5 @@ Sb , Sbb = _get_sb(a,J)
 save("bif_henon_J0.3.jld2", "P", P, "a", a, "J", J, "Sb", Sb, "Sbb", Sbb)
 
 @load "bif_henon_J0.3.jld2"
-print_fig(a, P, Sb, Sbb, "fig8_bif_J0.3")
+print_fig(a, P, Sb, Sbb, "fig9_bif_J0.3")
 

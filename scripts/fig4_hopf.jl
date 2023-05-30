@@ -1,4 +1,9 @@
-using DrWatson
+# Script to produce the Figure 4 of the paper 
+# Using basin entropy to explore bifurcations
+# MIT License
+# Copyright (c) 2023 Alexandre Wagemkakers
+# You should have received a copy of the license with this software. 
+ using DrWatson
 @quickactivate
 using Attractors
 using CairoMakie
@@ -110,6 +115,6 @@ lp2.rasterize = 10
 colsize!(gb, 2, Auto(0.35))
 rowgap!(gb2, 2)
 colgap!(gb, 2)
-save("fig3b.png",f)
-save("fig3b.svg",f, pt_per_unit = 1)
+save("fig4b.png",f)
+save("fig4b.svg",f, pt_per_unit = 1)
 
