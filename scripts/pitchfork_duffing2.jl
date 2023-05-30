@@ -13,42 +13,39 @@ using LaTeXStrings
 using Colors
 using ColorSchemes
 
-function lorenz(u0=[0.0, 10.0, 0.0]; σ = 10.0, ρ = 28.0, β = 8/3)
+function duffing(u0 = [0.1, 0.25]; ω = 2.2, f = 27.0, d = 0.2, β = 1)
     diffeq = (alg = Vern9(), reltol = 1e-10, maxiters = 1e8)
-    return CoupledODEs(lorenz_rule, u0, [σ, ρ, β]; diffeq = diffeq)
+    return CoupledODEs(duffing_rule, u0, [ω, f, d, β]; diffeq = diffeq)
 end
-const lorenz63 = lorenz
-@inbounds function lorenz_rule(u, p, t)
-    du1 = p[1]*(u[2]-u[1])
-    du2 = u[1]*(p[2]-u[3]) - u[2]
-    du3 = u[1]*u[2] - p[3]*u[3]
-    return SVector{3}(du1, du2, du3)
-end
-@inbounds function lorenz_jacob(u, p, t)
-        return SMatrix{3,3}(-p[1], p[2] - u[3], u[2], p[1], -1.0, u[1], 0.0, -u[1], -p[3])
+@inbounds function duffing_rule(x, p, t)
+    ω, f, d, β = p
+    dx1 = x[2]
+    dx2 = f*cos(ω*t) + β*x[1] - x[1]^3 - d * x[2]
+    return SVector(dx1, dx2)
 end
 
-function _get_lorenz(di)
-    @unpack ρ, xg, yg  = di
-    ds = lorenz(rand(3); ρ = ρ)
-    xgg = ygg = zgg  = range(-10, 10, length = 50001)
-    grid = (xgg, ygg, zgg)
+function _get_duffing(di)
+    @unpack β, xg, yg  = di
+    ds = duffing(rand(2); β = β, f = 0.)
+    xgg = ygg = range(-10, 10, length = 5001)
+    grid = (xgg, ygg)
     mapper = AttractorsViaRecurrences(ds, grid; 
             mx_chk_fnd_att = 5000,
             mx_chk_loc_att = 5000)
     grid = (xg, yg)
-    basins = [ mapper([x,y,0.]) for x in xg, y in yg]
-    att = extract_attractors(mapper)
+    # basins = [ mapper([x,y]) for x in xg, y in yg]
+    basins, att = basins_of_attraction(mapper, grid; show_progress = true)
+    # att = extract_attractors(mapper)
     sb, sbb =  basin_entropy(basins,  20)
     return @strdict(basins, att, sb, sbb, xg, yg)
 end
 
-function _get_datas(ρ, xg, yg; force = false) 
-    filename = config -> savename("basins_lorenz", config; digits = 5)
+function _get_datas(β, xg, yg; force = false) 
+    filename = config -> savename("basins_duffing", config; digits = 5)
     data, file = produce_or_load(
         datadir("basins"), # path
-        @dict(ρ, xg, yg), # container
-        _get_lorenz; # function
+        @dict(β, xg, yg), # container
+        _get_duffing; # function
         filename,
         force = force,
         wsave_kwargs = (;compress = true)
@@ -82,29 +79,29 @@ gb1 = gb[1,1] = GridLayout()
 gb2 = gb[1,2] = GridLayout()
 
 res = 401
-ρ = range(0.7,1.3, length = 48)
+β = range(-0.5, 0.5, length = 60)
 xg = range(-2, 2, length = res)
 yg = range(-2, 2, length = res)
-Sb =zeros(length(ρ))
-Sbb =zeros(length(ρ))
-for j in 1:length(ρ)
-    @show ρ[j]
-    bas, att, sb, sbb = _get_datas(ρ[j], xg, yg; force = false)
+Sb =zeros(length(β))
+Sbb =zeros(length(β))
+for j in 1:length(β)
+    @show β[j]
+    bas, att, sb, sbb = _get_datas(β[j], xg, yg; force = false)
     Sb[j] = sb
 end
 
 
-ax = Axis(gb1[1,1], ylabel = L"S_b", xlabel = L"$\rho$"; print_args...)
-scatter!(ax, ρ, Sb, markersize = 4, color = :black)
+ax = Axis(gb1[1,1], ylabel = L"S_b", xlabel = L"$\beta$"; print_args...)
+scatter!(ax, β, Sb, markersize = 4, color = :black)
 
 # Inset 1. A1
-bas, att, sb, sbb = _get_datas(0.7, xg, yg)
+bas, att, sb, sbb = _get_datas(-0.5, xg, yg)
 cmap = ColorScheme([RGB(230/255,230/255,230/255)])
 ax = Axis(gb2[2,1]; ylabel = L"y", xlabel = L"x", print_args1...)
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
 
 # Inset 2. A1
-bas, att, sb, sbb = _get_datas(1.3, xg, yg)
+bas, att, sb, sbb = _get_datas(0.025, xg, yg)
 ax = Axis(gb2[1,1]; ylabel = L"y", xlabel = L"x", print_args1...)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
