@@ -63,5 +63,5 @@ Sb, Sbb = compute_Sb_fig(μ, xg, yg)
 ax = Axis(f[1,1], ylabel = L"S_b", xlabel = L"$\mu$"; print_args...)
 scatter!(ax, μ, Sb, markersize = 4, color = :black)
 
-save("fig2b.png",f)
-save("fig2b.svg",f, pt_per_unit = 1)
+save("fig3b.png",f)
+save("fig3b.svg",f, pt_per_unit = 1)
