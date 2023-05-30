@@ -6,4 +6,4 @@ include("fig6_homoclinic.jl")
 include("fig7_Asf.jl")
 include("fig8_bas_bif.jl")
 include("fig9_bif_diag.jl")
-
+include("pitchfork_lorenz.jl")
