@@ -78,7 +78,7 @@ gb = f[1,1] = GridLayout()
 gb1 = gb[1,1] = GridLayout()
 gb2 = gb[1,2] = GridLayout()
 
-res = 401
+res = 1501
 β = range(-0.5, 0.5, length = 60)
 xg = range(-2, 2, length = res)
 yg = range(-2, 2, length = res)

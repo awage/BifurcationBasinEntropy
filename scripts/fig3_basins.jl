@@ -52,10 +52,10 @@ print_args = (; yticklabelsize = 8,
             xticksize = 2,
             yticksize = 2)
 
-size_cm = (8, 7); size_pt = 28.3 .* size_cm
+size_cm = (8, 5.5); size_pt = 28.3 .* size_cm
 f = Figure(resolution = size_pt)
 
-res = 151
+res = 1501
 μ = range(0.5,1.5, length = 28)
 xg = range(-1, 1, length = res)
 yg = range(-1, 1, length = res)
