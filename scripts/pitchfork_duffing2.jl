@@ -101,7 +101,7 @@ ax = Axis(gb2[2,1]; ylabel = L"y", xlabel = L"x", print_args1...)
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
 
 # Inset 2. A1
-bas, att, sb, sbb = _get_datas(0.025, xg, yg)
+bas, att, sb, sbb = _get_datas(0.008474, xg, yg)
 ax = Axis(gb2[1,1]; ylabel = L"y", xlabel = L"x", print_args1...)
 cmap = ColorScheme([RGB(230/255,230/255,230/255), RGB(1,0,0),  RGB(1,85/255,85/255)] )
 heatmap!(ax, xg, yg, bas; colormap = cmap, rasterize = 4)
